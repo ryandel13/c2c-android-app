@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" android:layout_centerHorizontal="true"
+    android:baselineAligned="false" android:orientation="horizontal" android:gravity="center_horizontal">
+
+    <ImageView
+        android:layout_width="100px"
+        android:layout_height="64px"
+        android:id="@+id/cloud"
+        android:src="@mipmap/cloud_64x64"
+        android:visibility="visible"/>
+    <ImageView
+        android:layout_width="100px"
+        android:layout_height="64px"
+        android:id="@+id/wifi"
+        android:src="@mipmap/wifi_64x64"
+        android:visibility="visible"/>
+
+    <ImageView
+        android:id="@+id/bluetooth"
+        android:layout_width="100px"
+        android:layout_height="64px"
+        android:src="@mipmap/bluetooth_64x64"
+        android:visibility="visible"/>
+
+</LinearLayout>
