@@ -28,6 +28,12 @@ public class ConnectionState extends Fragment {
         return uiObject;
     }
 
+    public enum ConnectionAction {
+
+    BLUETOOTH_AVAILABLE, BLUETOOTH_UNAVAILABLE, WIFI_AVAILABLE, WIFI_UNAVAILABLE,
+    CLOUD_AVAILABLE, CLOUD_UNAVAILABLE
+}
+
     private BluetoothManager btManager = new BluetoothManager();
     private WifiManager wfManager = new WifiManager();
     private CloudManager cdManager = new CloudManager();
@@ -90,8 +96,25 @@ public class ConnectionState extends Fragment {
 
         protected void onPostExecute(Map<WirelessConnection, Boolean> result) {
             for(WirelessConnection c : result.keySet()) {
-                updateConnections(c, result.get(c));
+              //  updateConnections(c, result.get(c));
             }
+        }
+    }
+
+    public static void updateConnectionStatus(ConnectionAction action) {
+        switch(action) {
+            case BLUETOOTH_AVAILABLE: uiObject.getView().findViewById(R.id.bluetooth).setVisibility(View.VISIBLE);
+            break;
+            case BLUETOOTH_UNAVAILABLE: uiObject.getView().findViewById(R.id.bluetooth).setVisibility(View.INVISIBLE);
+            break;
+            case WIFI_AVAILABLE: uiObject.getView().findViewById(R.id.bluetooth).setVisibility(View.VISIBLE);
+            break;
+            case WIFI_UNAVAILABLE: uiObject.getView().findViewById(R.id.bluetooth).setVisibility(View.INVISIBLE);
+            break;
+            case CLOUD_AVAILABLE: uiObject.getView().findViewById(R.id.bluetooth).setVisibility(View.VISIBLE);
+            break;
+            case CLOUD_UNAVAILABLE: uiObject.getView().findViewById(R.id.bluetooth).setVisibility(View.INVISIBLE);
+            default: return;
         }
     }
 }

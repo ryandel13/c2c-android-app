@@ -11,6 +11,7 @@ import android.content.IntentFilter;
 import android.os.ParcelUuid;
 import android.widget.Toast;
 
+import net.mkengineering.testapp.ConnectionState;
 import net.mkengineering.testapp.R;
 import net.mkengineering.testapp.StatusFragment;
 import net.mkengineering.testapp.Temperature;
@@ -72,7 +73,7 @@ public class BluetoothManager implements WirelessConnection{
 
         } else
         {
-            this.getAdapter().enable();
+            //this.getAdapter().enable();
         }
         return false;
     }
@@ -82,17 +83,21 @@ public class BluetoothManager implements WirelessConnection{
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
-
-            if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action)) {
+            BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+            if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action)
+                    && device.getName().equalsIgnoreCase(ConfigurationService.getVIN())) {
                 //Do something if connected
                 //Toast.makeText(getApplicationContext(), "BT Connected", Toast.LENGTH_SHORT).show();
                 BluetoothManager.connected = true;
-                Temperature.makeToast("BT connected");
-            } else if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action)) {
+                ConnectionState.updateConnectionStatus(ConnectionState.ConnectionAction.BLUETOOTH_AVAILABLE);
+                Temperature.makeToast("Vehicle is nearby");
+            } else if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action)
+                    && device.getName().equalsIgnoreCase(ConfigurationService.getVIN())) {
                 //Do something if disconnected
                 //Toast.makeText(getApplicationContext(), "BT Disconnected", Toast.LENGTH_SHORT).show();
                 BluetoothManager.connected = false;
-                Temperature.makeToast("BT disconnected");
+                ConnectionState.updateConnectionStatus(ConnectionState.ConnectionAction.BLUETOOTH_UNAVAILABLE);
+                Temperature.makeToast("Vehicle is out of range");
             }
         }
     };
