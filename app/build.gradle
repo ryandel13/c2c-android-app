@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion "26.0.1"
+    buildToolsVersion "26.0.2"
 
     defaultConfig {
         applicationId "net.mkengineering.testapp"
@@ -12,9 +12,6 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
-        jackOptions {
-            enabled = true
-        }
     }
     buildTypes {
         release {
@@ -33,7 +30,6 @@ android {
         exclude 'META-INF/spring.schemas'
         exclude 'META-INF/spring.tooling'
         exclude 'META-INF/spring.*'
-
     }
 }
 
