@@ -1,2 +1,10 @@
 /.idea
 /.gradle
+
+*.rawproto
+*.iml
+build/android-profile/profile-2017-11-12-18-13-51-920.json
+*.json
+*.iml
+app/app.iml
+*.jar
