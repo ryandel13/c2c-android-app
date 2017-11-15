@@ -1,6 +1,9 @@
 package net.mkengineering.testapp;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,18 +29,30 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 
 public class StatusFragment extends Fragment {
 
+    private static StatusFragment uiObject;
+    private static Handler mHandler;
+
+    public StatusFragment() {
+
+
+        if(uiObject == null) {
+            uiObject = this;
+            mHandler = new Handler(Looper.getMainLooper()) {
+                @Override
+                public void handleMessage(Message inputMessage) {
+
+                }
+            };
+        }
+    }
+
     public static StatusFragment getUiObject() {
         return uiObject;
     }
 
-    private static StatusFragment uiObject;
-
-    public enum GraphType { INSIDE, OUTSIDE, ENGINE }
-
-    public StatusFragment() {
-        if(uiObject == null) {
-            uiObject = this;
-        }
+    private static double round(double value, int precision) {
+        int scale = (int) Math.pow(10, precision);
+        return (double) Math.round(value * scale) / scale;
     }
 
     @Override
@@ -114,9 +129,6 @@ public class StatusFragment extends Fragment {
         }
     }
 
-    private static double round (double value, int precision) {
-        int scale = (int) Math.pow(10, precision);
-        return (double) Math.round(value * scale) / scale;
-    }
+    public enum GraphType {INSIDE, OUTSIDE, ENGINE}
 
 }

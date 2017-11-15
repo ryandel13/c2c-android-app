@@ -1,12 +1,12 @@
 package net.mkengineering.testapp.services;
 
-import android.os.AsyncTask;
+import android.os.Message;
+import android.util.Log;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import net.mkengineering.testapp.ConnectionState;
 import net.mkengineering.testapp.R;
-import net.mkengineering.testapp.StatusFragment;
-import net.mkengineering.testapp.objects.DataResponse;
 
 import org.apache.commons.io.IOUtils;
 
@@ -24,34 +24,58 @@ public class CloudManager implements WirelessConnection {
 
     private static Boolean connected = false;
 
+    private static Boolean initialized = false;
+
     public CloudManager() {
-
-        Thread thread = new Thread() {
-            @Override
-            public void run() {
-                try {
-                    while(true) {
-                        SECONDS.sleep(1);
-                        processHttpUpdate();
+        if (!initialized) {
+            Log.d("info", "Starting instance of Cloud Update Thread");
+            initialized = true;
+            Thread thread = new Thread() {
+                @Override
+                public void run() {
+                    try {
+                        while (true) {
+                            Log.d("Cloud", "Update Cloud Connection");
+                            SECONDS.sleep(1);
+                            processHttpUpdate();
+                        }
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
                 }
-            }
-        };
+            };
 
-        thread.start();
+            thread.start();
+        }
     }
 
     private void processHttpUpdate() {
         try {
-            String sURL = "http://ryandel.selfhost.me:8801/vehicle/WP0ZZZ94427/temperature_inside/history";
+            String sURL = "http://ryandel.selfhost.me:8801/vehicle/WP0ZZZ94427/lastConnection";
 
             // Connect to the URL using java's native library
             URL url = new URL(sURL);
-            LastConnectionRequester requester = new LastConnectionRequester();
-            requester.execute(url);
-        } catch (Exception e) {}
+            HttpURLConnection request = (HttpURLConnection) url.openConnection();
+            request.setReadTimeout(1000);
+            request.connect();
+
+            ObjectMapper mapper = new ObjectMapper();
+            String response = IOUtils.toString((InputStream) request.getContent(), "UTF-8");
+
+            request.disconnect();
+            connected = true;
+
+            WirelessConnection.StateMessage message = new WirelessConnection.StateMessage();
+            message.setConnected(true);
+            message.setExecutor(this);
+
+            Message x = ConnectionState.getmHandler().obtainMessage(1, message);
+            ConnectionState.getmHandler().sendMessage(x);
+
+        } catch (Exception e) {
+            Log.d("warn", "Connection to cloud failed");
+            connected = false;
+        }
     }
 
     public Boolean isConnected() {
@@ -67,42 +91,4 @@ public class CloudManager implements WirelessConnection {
     public int getViewId() {
         return R.id.cloud;
     }
-
-    private class LastConnectionRequester extends AsyncTask<URL, Long, Boolean> {
-
-        @Override
-        protected Boolean doInBackground(URL... params) {
-            try {
-                URL url = params[0];
-                    //String sURL = url.toString()"http://ryandel.selfhost.me:8801/vehicle/WP0ZZZ94427/temperature_inside/history"; //just a string
-
-                    // Connect to the URL using java's native library
-                    //URL url = new URL(sURL);
-                    HttpURLConnection request = (HttpURLConnection) url.openConnection();
-                    request.connect();
-
-
-                    ObjectMapper mapper = new ObjectMapper();
-                    String response = IOUtils.toString((InputStream) request.getContent(), "UTF-8");
-
-                    StatusFragment.GraphType type = null;
-                    if(url.toString().contains("inside")) type = StatusFragment.GraphType.INSIDE;
-                    else if(url.toString().contains("outside")) type = StatusFragment.GraphType.OUTSIDE;
-                    else type = StatusFragment.GraphType.ENGINE;
-
-                    request.disconnect();
-            } catch(Exception e) {
-                e.printStackTrace();
-                return false;
-            }
-            return true;
-        }
-
-        // This is called when doInBackground() is finished
-        protected void onPostExecute(Boolean result) {
-            connected = result;
-        }
-    }
-
-
 }
