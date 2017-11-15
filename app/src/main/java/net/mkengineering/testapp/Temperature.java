@@ -1,9 +1,7 @@
 package net.mkengineering.testapp;
 
-import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -18,8 +16,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -157,5 +153,9 @@ public class Temperature extends FragmentActivity {
 
     public static void registerReceiverRemote(BroadcastReceiver receiver, IntentFilter filter) {
         instance.registerReceiver(receiver, filter);
+    }
+
+    public static FragmentActivity getInstance() {
+        return instance;
     }
 }

@@ -1,20 +1,15 @@
-package net.mkengineering.testapp;
+package net.mkengineering.testapp.tasks;
 
 import android.os.AsyncTask;
-import android.widget.TextView;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
+import net.mkengineering.testapp.StatusFragment;
 import net.mkengineering.testapp.objects.DataResponse;
 
 import org.apache.commons.io.IOUtils;
 
-import java.io.BufferedReader;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;

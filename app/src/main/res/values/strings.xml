@@ -1,9 +1,5 @@
 <resources>
-    <string name="app_name">Masterthesis</string>
     <string name="title_home">Home</string>
     <string name="title_dashboard">Commands</string>
     <string name="title_notifications">Status</string>
-    <string name="edit_message">Enter new key</string>
-    <string name="button_key">Send</string>
-    <string name="title_activity_main">MainActivity</string>
 </resources>

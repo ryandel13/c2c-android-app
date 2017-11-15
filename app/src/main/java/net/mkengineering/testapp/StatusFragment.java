@@ -1,7 +1,6 @@
 package net.mkengineering.testapp;
 
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +14,7 @@ import net.mkengineering.testapp.objects.DataResponse;
 import net.mkengineering.testapp.objects.ResponseEntity;
 import net.mkengineering.testapp.services.ConfigurationService;
 import net.mkengineering.testapp.services.RemoteUrlBuilder;
+import net.mkengineering.testapp.tasks.JSONRequestTask;
 
 import java.net.URL;
 

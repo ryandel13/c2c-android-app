@@ -11,5 +11,4 @@ public interface WirelessConnection {
     String getFriendlyName();
 
     int getViewId();
-
 }

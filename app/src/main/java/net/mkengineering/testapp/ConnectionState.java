@@ -2,7 +2,6 @@ package net.mkengineering.testapp;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.transition.Visibility;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -96,7 +95,7 @@ public class ConnectionState extends Fragment {
 
         protected void onPostExecute(Map<WirelessConnection, Boolean> result) {
             for(WirelessConnection c : result.keySet()) {
-              //  updateConnections(c, result.get(c));
+                updateConnections(c, result.get(c));
             }
         }
     }

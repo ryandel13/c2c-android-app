@@ -10,7 +10,7 @@ public class Constants {
 
     public static String username = "Malte.Christjan.Koch@t-online.de";
 
-    public static String TcuSssid = "Dorint Hotels Wi-Fi";
+    public static String TcuSssid = "WP0ZZZ94427";
 
     public static String remoteBaseUrl = "http://ryandel.selfhost.me/";
 

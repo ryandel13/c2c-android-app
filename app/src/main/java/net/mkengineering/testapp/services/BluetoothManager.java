@@ -2,22 +2,18 @@ package net.mkengineering.testapp.services;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothProfile;
 import android.bluetooth.BluetoothSocket;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.os.ParcelUuid;
-import android.widget.Toast;
+import android.util.Log;
 
-import net.mkengineering.testapp.ConnectionState;
 import net.mkengineering.testapp.R;
-import net.mkengineering.testapp.StatusFragment;
 import net.mkengineering.testapp.Temperature;
+import net.mkengineering.testapp.objects.BluetoothWrapper;
 
 import java.util.Set;
-import java.util.UUID;
+
+import lombok.SneakyThrows;
+
+import static java.util.concurrent.TimeUnit.SECONDS;
 
 /**
  * Created by MalteChristjan on 08.11.2017.
@@ -27,27 +23,40 @@ public class BluetoothManager implements WirelessConnection{
 
     private static BluetoothAdapter mBluetoothAdapter;
 
-    private static android.bluetooth.BluetoothManager btManager;
-
     private static boolean initialized = false;
 
-    private static boolean connected = false;
+    static boolean connected = false;
+
+    private BluetoothWrapper bt;
 
     public BluetoothManager() {
         BluetoothManager.mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (BluetoothManager.mBluetoothAdapter != null && !initialized) {
-            mBluetoothAdapter.disable();
             initialized = true;
 
-            IntentFilter filter = new IntentFilter();
-            filter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED);
-            filter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED);
-            filter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED);
-            Temperature.registerReceiverRemote(mReceiver, filter);
+            bt = new BluetoothWrapper(Temperature.getInstance());
+            bt.setCommunicationCallback(new Callback());
+            bt.connectToName(ConfigurationService.getVIN());
+
+            Thread retryThread = new Thread() {
+
+                @Override
+                public void run() {
+                    retryBluetooth();
+                }
+            };
+            retryThread.start();
         }
     }
 
-
+    @SneakyThrows
+    private void retryBluetooth() {
+        while (!BluetoothManager.connected) {
+            Log.d("info", "Retry Bluetooth Connection...");
+            SECONDS.sleep(3);
+            bt.connectToName(ConfigurationService.getVIN());
+        }
+    }
 
 
     private BluetoothAdapter getAdapter() {
@@ -78,30 +87,6 @@ public class BluetoothManager implements WirelessConnection{
         return false;
     }
 
-    //The BroadcastReceiver that listens for bluetooth broadcasts
-    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-            if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action)
-                    && device.getName().equalsIgnoreCase(ConfigurationService.getVIN())) {
-                //Do something if connected
-                //Toast.makeText(getApplicationContext(), "BT Connected", Toast.LENGTH_SHORT).show();
-                BluetoothManager.connected = true;
-                ConnectionState.updateConnectionStatus(ConnectionState.ConnectionAction.BLUETOOTH_AVAILABLE);
-                Temperature.makeToast("Vehicle is nearby");
-            } else if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action)
-                    && device.getName().equalsIgnoreCase(ConfigurationService.getVIN())) {
-                //Do something if disconnected
-                //Toast.makeText(getApplicationContext(), "BT Disconnected", Toast.LENGTH_SHORT).show();
-                BluetoothManager.connected = false;
-                ConnectionState.updateConnectionStatus(ConnectionState.ConnectionAction.BLUETOOTH_UNAVAILABLE);
-                Temperature.makeToast("Vehicle is out of range");
-            }
-        }
-    };
-
     @Override
     public String getFriendlyName() {
         return "bluetooth";
@@ -110,5 +95,47 @@ public class BluetoothManager implements WirelessConnection{
     @Override
     public int getViewId() {
         return R.id.bluetooth;
+    }
+
+    private class Callback implements BluetoothWrapper.CommunicationCallback {
+
+        private Boolean receivedBeacon = false;
+
+        @Override
+        @SneakyThrows
+        public void onConnect(BluetoothDevice device) {
+            System.out.println("Connected");
+            BluetoothManager.connected = true;
+            while (!receivedBeacon) {
+                bt.send("A_C2C_A");
+                SECONDS.sleep(1);
+            }
+        }
+
+        @Override
+        public void onDisconnect(BluetoothDevice device, String message) {
+            System.out.println("Disconnected");
+            BluetoothManager.connected = false;
+            receivedBeacon = false;
+            retryBluetooth();
+        }
+
+        @Override
+        public void onMessage(String message) {
+            System.out.println("Message " + message);
+            if (message.equalsIgnoreCase("A_C2C_T")) {
+                receivedBeacon = true;
+            }
+        }
+
+        @Override
+        public void onError(String message) {
+            System.out.println("Error" + message);
+        }
+
+        @Override
+        public void onConnectError(BluetoothDevice device, String message) {
+            System.out.println();
+        }
     }
 }
