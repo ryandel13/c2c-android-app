@@ -11,8 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import net.mkengineering.testapp.objects.DataResponse;
-import net.mkengineering.testapp.objects.ResponseEntity;
+import net.mkengineering.studies.sds.DataResponse;
+import net.mkengineering.studies.sds.ResponseEntity;
 import net.mkengineering.testapp.tasks.HomeUpdateTask;
 
 import java.util.HashMap;
@@ -59,7 +59,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void updateHomeScreen(DataResponse jsonObject) {
-        DataResponse data = (DataResponse) jsonObject;
+        DataResponse data = jsonObject;
         Map<String, ResponseEntity> map = new HashMap<>();
         for (ResponseEntity rE : data.getValues()) {
             map.put(rE.getName(), rE);

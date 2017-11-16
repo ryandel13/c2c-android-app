@@ -5,8 +5,8 @@ import android.util.Log;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import net.mkengineering.studies.sds.DataResponse;
 import net.mkengineering.testapp.HomeFragment;
-import net.mkengineering.testapp.objects.DataResponse;
 import net.mkengineering.testapp.services.CloudManager;
 
 import org.apache.commons.io.IOUtils;
@@ -55,7 +55,7 @@ public class HomeUpdateTask implements Runnable {
 
             request.disconnect();
 
-            DataResponse dR = (DataResponse) mapper.readValue(response, DataResponse.class);
+            DataResponse dR = mapper.readValue(response, DataResponse.class);
             HomeFragmentMessage hfm = new HomeFragmentMessage();
             hfm.setDataResponse(dR);
 
