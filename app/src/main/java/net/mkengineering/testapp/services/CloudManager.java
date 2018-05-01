@@ -71,7 +71,7 @@ public class CloudManager implements WirelessConnection {
             request.disconnect();
             DataResponse dResp = mapper.readValue(response, DataResponse.class);
             connected = true;
-            if (dResp.getTimestamp() < System.currentTimeMillis() - (5 * 60 * 1000)) {
+            if (dResp.getTimestamp() < System.currentTimeMillis() - (300 * 1000)) {
                 carConnected = true;
             }
 
