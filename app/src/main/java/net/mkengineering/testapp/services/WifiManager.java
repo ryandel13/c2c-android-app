@@ -41,7 +41,8 @@ public class WifiManager implements WirelessConnection {
     }
 
     private void transferConnectionState() {
-        WirelessConnection.StateMessage message = new WirelessConnection.StateMessage();
+        WirelessConnection.StateMessage message = new WirelessConnection
+                .StateMessage();
         message.setExecutor(this);
         message.setConnected(false);
 

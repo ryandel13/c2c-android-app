@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import net.mkengineering.studies.vds.DataResponse;
 import net.mkengineering.testapp.ConnectionState;
 import net.mkengineering.testapp.R;
 
@@ -23,6 +24,8 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 public class CloudManager implements WirelessConnection {
 
     private static Boolean connected = false;
+
+    private static Boolean carConnected = false;
 
     private static Boolean initialized = false;
 
@@ -51,7 +54,9 @@ public class CloudManager implements WirelessConnection {
 
     private void processHttpUpdate() {
         try {
-            String sURL = "http://ryandel.selfhost.me:8801/vehicle/WP0ZZZ94427/lastConnection";
+            String sURL = "http://ryandel.selfhost.me:8801/vehicle/"
+                    + ConfigurationService.getVIN()
+                    + "/lastConnection";
 
             // Connect to the URL using java's native library
             URL url = new URL(sURL);
@@ -60,13 +65,20 @@ public class CloudManager implements WirelessConnection {
             request.connect();
 
             ObjectMapper mapper = new ObjectMapper();
-            String response = IOUtils.toString((InputStream) request.getContent(), "UTF-8");
+            String response = IOUtils.toString((InputStream) request
+                    .getContent(), "UTF-8");
 
             request.disconnect();
+            DataResponse dResp = mapper.readValue(response, DataResponse.class);
             connected = true;
+            if (dResp.getTimestamp() < System.currentTimeMillis() - (5 * 60 * 1000)) {
+                carConnected = true;
+            }
 
-            WirelessConnection.StateMessage message = new WirelessConnection.StateMessage();
-            message.setConnected(true);
+
+            WirelessConnection.StateMessage message = new WirelessConnection
+                    .StateMessage();
+            message.setConnected(connected);
             message.setExecutor(this);
 
             Message x = ConnectionState.getmHandler().obtainMessage(1, message);
