@@ -110,7 +110,8 @@ public class BluetoothManager implements WirelessConnection{
                 WirelessConnection.StateMessage stateMessage = new StateMessage();
                 stateMessage.setExecutor(wConn);
                 stateMessage.setConnected(true);
-                Message uiMessage = ConnectionState.getmHandler().obtainMessage(1, stateMessage);
+                Message uiMessage = ConnectionState.getmHandler()
+                        .obtainMessage(1, stateMessage);
                 ConnectionState.getmHandler().sendMessage(uiMessage);
             }
             //while (!receivedBeacon) {
@@ -127,7 +128,8 @@ public class BluetoothManager implements WirelessConnection{
             WirelessConnection.StateMessage stateMessage = new StateMessage();
             stateMessage.setExecutor(wConn);
             stateMessage.setConnected(BluetoothManager.connected);
-            Message uiMessage = ConnectionState.getmHandler().obtainMessage(1, stateMessage);
+            Message uiMessage = ConnectionState.getmHandler()
+                    .obtainMessage(1, stateMessage);
             ConnectionState.getmHandler().sendMessage(uiMessage);
 
             receivedBeacon = false;
