@@ -32,14 +32,17 @@ public class HomeFragment extends Fragment {
     private static Handler mHandler;
 
     public HomeFragment() {
-        mHandler = new Handler(Looper.getMainLooper()) {
+        if (instance == null) {
+            instance = this;
+            mHandler = new Handler(Looper.getMainLooper()) {
 
-            @Override
-            public void handleMessage(Message inputMessage) {
-                Log.i("HomeFragmentHandler", "Handling incoming message");
-                updateHomeScreen(((HomeUpdateTask.HomeFragmentMessage) inputMessage.obj).getDataResponse());
-            }
-        };
+                @Override
+                public void handleMessage(Message inputMessage) {
+                    Log.i("HomeFragmentHandler", "Handling incoming message");
+                    updateHomeScreen(((HomeUpdateTask.HomeFragmentMessage) inputMessage.obj).getDataResponse());
+                }
+            };
+        }
     }
 
     public static HomeFragment getUiObject() {
@@ -52,29 +55,41 @@ public class HomeFragment extends Fragment {
         // Inflate the layout for this fragment
         instance = this;
 
-        Thread thread = new Thread(new HomeUpdateTask());
-        thread.start();
-
         return inflater.inflate(R.layout.view_home, container, false);
     }
 
-    private void updateHomeScreen(DataResponse jsonObject) {
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        Thread thread = new Thread(new HomeUpdateTask());
+        thread.start();
+    }
+
+
+    private Boolean updateHomeScreen(DataResponse jsonObject) {
         DataResponse data = jsonObject;
         Map<String, ResponseEntity> map = new HashMap<>();
         for (ResponseEntity rE : data.getValues()) {
             map.put(rE.getName(), rE);
         }
 
-        TextView home_license = (TextView) getView().findViewById(R.id.home_license);
-        home_license.setText(map.get("licensePlate").getValue());
+        try {
+            TextView home_license = (TextView) getView().findViewById(R.id.home_license);
+            home_license.setText(map.get("licensePlate").getValue());
 
-        TextView home_motor = (TextView) getView().findViewById(R.id.home_motorcode);
-        home_motor.setText(map.get("motorCode").getValue());
+            TextView home_motor = (TextView) getView().findViewById(R.id.home_motorcode);
+            home_motor.setText(map.get("motorCode").getValue());
 
-        getView().findViewById(R.id.home_license).setVisibility(View.VISIBLE);
-        getView().findViewById(R.id.home_motorcode).setVisibility(View.VISIBLE);
-        getView().findViewById(R.id.home_separator).setVisibility(View.VISIBLE);
-        getView().findViewById(R.id.progressBar).setVisibility(View.INVISIBLE);
+            getView().findViewById(R.id.home_license).setVisibility(View.VISIBLE);
+            getView().findViewById(R.id.home_motorcode).setVisibility(View.VISIBLE);
+            getView().findViewById(R.id.home_separator).setVisibility(View.VISIBLE);
+            getView().findViewById(R.id.progressBar).setVisibility(View.INVISIBLE);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
 }

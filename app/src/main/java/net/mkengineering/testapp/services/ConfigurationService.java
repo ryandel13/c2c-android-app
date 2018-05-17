@@ -3,11 +3,8 @@ package net.mkengineering.testapp.services;
 import net.mkengineering.testapp.objects.Constants;
 
 import java.net.URL;
-import java.util.logging.Logger;
 
 import lombok.SneakyThrows;
-import lombok.extern.java.Log;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * Created by MalteChristjan on 17.10.2017.
@@ -28,6 +25,4 @@ public class ConfigurationService {
     @SneakyThrows
     public static URL getRemoteUrl() { return new URL(Constants.remoteBaseUrl); }
 
-    @SneakyThrows
-    public static URL getNearbyUrl() { return new URL(Constants.nearbyBaseUrl); }
 }

@@ -93,11 +93,12 @@ public class Temperature extends FragmentActivity {
     }
 
     public void executeLock(View view) {
+
         cmdService.sendCommand(CommandService.COMMAND.LOCK);
     }
 
     private void openFragment(Fragment fragment) {
-        Bundle args = new Bundle();
+        //Bundle args = new Bundle();
         //args.putInt(CommandView.ARG_POSITION, position);
         //fragment.setArguments(args);
 
@@ -129,14 +130,14 @@ public class Temperature extends FragmentActivity {
             }
 
             // Create a new Fragment to be placed in the activity layout
-            Fragment firstFragment = new HomeFragment();
+            //Fragment firstFragment = new HomeFragment();
 
             // In case this activity was started with special instructions from an
             // Intent, pass the Intent's extras to the fragment as arguments
-            firstFragment.setArguments(getIntent().getExtras());
+            homeFragment.setArguments(getIntent().getExtras());
 
             // Add the fragment to the 'fragment_container' FrameLayout
-            getSupportFragmentManager().beginTransaction().add(R.id.content, firstFragment).commit();
+            getSupportFragmentManager().beginTransaction().add(R.id.content, homeFragment).commit();
         }
 
         /*

@@ -28,9 +28,14 @@ public class HomeUpdateTask implements Runnable {
 
     @Override
     public void run() {
-        while (!wasUpdated) {
+        while (true) {
             Log.d("HomeFragmentAttributes", "Trying to retrieve Home Attributes");
             retrieveAttributes();
+            try {
+                Thread.sleep(1000);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 

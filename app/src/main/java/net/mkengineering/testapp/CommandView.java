@@ -18,8 +18,4 @@ public class CommandView extends Fragment {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.view_commands, container, false);
     }
-
-    public void executeLock(View view) {
-
-    }
 }

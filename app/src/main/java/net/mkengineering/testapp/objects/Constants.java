@@ -12,7 +12,5 @@ public class Constants {
 
     public static String TcuSssid = "WP0ZZZ94427";
 
-    public static String remoteBaseUrl = "http://ryandel.selfhost.me/";
-
-    public static String nearbyBaseUrl = "http://epsilon/";
+    public static String remoteBaseUrl = "http://c2c.ryandel.selfhost.me";
 }

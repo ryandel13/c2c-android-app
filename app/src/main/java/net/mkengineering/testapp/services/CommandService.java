@@ -5,7 +5,7 @@ import android.os.AsyncTask;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import net.mkengineering.studies.ces.Command;
-
+import net.mkengineering.testapp.objects.Constants;
 
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
@@ -30,19 +30,61 @@ public class CommandService {
         cmd.setTimestamp(System.currentTimeMillis());
         cmd.setCommandAttribute("");
 
-        Thread thread = new Thread() {
+        CommandRequestThread crt = new CommandRequestThread(cmd);
+
+        Thread thread = new Thread(crt); /*{
             @Override
             public void run() {
 
-                CommandRequest cReq = new CommandRequest();
+                CommandRequestThread cReq = new CommandRequestThread();
                 cReq.execute(cmd);
 
             }
-        };
+        };*/
 
         thread.start();
     }
 
+
+    public class CommandRequestThread implements Runnable {
+
+        private Command cmd;
+
+        public CommandRequestThread(Command cmd) {
+            this.cmd = cmd;
+        }
+
+        @Override
+        public void run() {
+            try {
+                URL url = new URL(Constants.remoteBaseUrl + ":8803/command/" + ConfigurationService.getVIN() + "/");
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestMethod("PUT");
+                connection.setDoOutput(true);
+                connection.setReadTimeout(1000);
+                System.out.println(url.toString());
+                connection.setRequestProperty("Content-Type", "application/json");
+                connection.setRequestProperty("Accept", "application/json");
+                OutputStreamWriter osw = new OutputStreamWriter(connection.getOutputStream());
+
+                ObjectMapper mapper = new ObjectMapper();
+                String jsonString = mapper.writeValueAsString(cmd);
+
+                //String output = String.format("{\"value\":%1$s,\"type\":\"%2$s\"}", value, String.class.getName());
+
+                osw.write(jsonString);
+                osw.flush();
+                osw.close();
+
+                System.out.println(jsonString);
+                System.err.println(connection.getResponseCode());
+
+                connection.disconnect();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
     public class CommandRequest extends AsyncTask<Command, Integer, Long> {
 
@@ -50,10 +92,11 @@ public class CommandService {
         protected Long doInBackground(Command... commands) {
             for (Command command : commands)
                 try {
-                    URL url = new URL("http://ryandel.selfhost.me:8803/command/" + ConfigurationService.getVIN() + "/");
+                    URL url = new URL(Constants.remoteBaseUrl + ":8803/command/" + ConfigurationService.getVIN() + "/");
                     HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                     connection.setRequestMethod("PUT");
                     connection.setDoOutput(true);
+                    connection.setReadTimeout(1000);
                     System.out.println(url.toString());
                     connection.setRequestProperty("Content-Type", "application/json");
                     connection.setRequestProperty("Accept", "application/json");
@@ -73,7 +116,7 @@ public class CommandService {
 
                     connection.disconnect();
                 } catch (Exception e) {
-
+                    e.printStackTrace();
                 }
             return null;
         }

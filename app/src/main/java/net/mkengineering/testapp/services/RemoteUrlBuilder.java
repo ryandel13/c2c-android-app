@@ -38,7 +38,7 @@ public class RemoteUrlBuilder
     public static URL getUriFor(SERVICE service, String context, String ressource, URL baseUrl)
     {
         int port = 0;
-        getInstance().ports.get(service);
+        port = getInstance().ports.get(service);
         String vin = ConfigurationService.getVIN();
         URL url = null;
         try {
