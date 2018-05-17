@@ -51,5 +51,6 @@ dependencies {
     compile 'commons-io:commons-io:2.5'
     compile 'net.mkengineering.studies.ces:command-execution-service-api:0.0.1-SNAPSHOT'
     compile 'net.mkengineering.studies.sds:static-data-service-api:0.0.2-SNAPSHOT'
+    compile 'net.mkengineering.studies.vds:variable-data-service-api:0.0.1-SNAPSHOT'
     testCompile 'junit:junit:4.12'
 }
