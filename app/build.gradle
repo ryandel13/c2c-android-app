@@ -25,11 +25,11 @@ android {
     }
 
         packagingOptions {
-
-        exclude 'META-INF/LICENSE'
-        exclude 'META-INF/spring.schemas'
-        exclude 'META-INF/spring.tooling'
-        exclude 'META-INF/spring.*'
+            META-INF/license.txt
+            exclude 'META-INF/LICENSE'
+            exclude 'META-INF/spring.schemas'
+            exclude 'META-INF/spring.tooling'
+            exclude 'META-INF/spring.*'
     }
 }
 
