@@ -25,7 +25,7 @@ android {
     }
 
         packagingOptions {
-            META-INF/license.txt
+            exclude 'META-INF/license.txt'
             exclude 'META-INF/LICENSE'
             exclude 'META-INF/spring.schemas'
             exclude 'META-INF/spring.tooling'
